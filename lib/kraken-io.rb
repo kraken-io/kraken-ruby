@@ -22,7 +22,7 @@ module Kraken
         }
       })
 
-      self.class.post('https://api.kraken.io/url', {:body => JSON.generate(params)})
+      self.class.post('https://api.kraken.io/v1/url', {:body => JSON.generate(params)})
     end
 
     def upload(params = {})
@@ -33,7 +33,7 @@ module Kraken
         }
       })
 
-      url = URI.parse("https://api.kraken.io/upload")
+      url = URI.parse("https://api.kraken.io/v1/upload")
 
       File.open(params['file']) do |file|
         params.delete('file')
