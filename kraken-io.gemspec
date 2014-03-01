@@ -17,4 +17,5 @@ Gem::Specification.new do |s|
   s.add_dependency('httparty')
   s.add_dependency('httmultiparty')
   s.add_dependency('multipart-post')
+  s.add_dependency('rest-client')
 end
