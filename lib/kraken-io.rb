@@ -1,6 +1,5 @@
 require 'json'
 require 'httparty'
-require 'rest-client'
 require 'net/http/post/multipart'
 
 module Kraken
