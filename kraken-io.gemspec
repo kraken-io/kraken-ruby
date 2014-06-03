@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency('json')
   s.add_dependency('httparty')
   s.add_dependency('multipart-post')
+  s.add_dependency('activesupport')
   s.add_development_dependency('rspec')
   s.add_development_dependency('webmock', '~> 1.17')
 end

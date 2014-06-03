@@ -9,27 +9,33 @@ describe Kraken::API do
       "kraked_size" =>  165358,
       "saved_bytes" =>  159162,
       "kraked_url" => "http://dl.kraken.io/ecdfa5c55d5668b1b5fe9e420554c4ee/header.jpg"
-    }.to_json
+    }
   end
 
-  subject { Kraken::API.new(1,2) }
+  subject { Kraken::API.new(api_key: 1, api_secret: 2) }
+
+  describe 'initialize' do
+    it 'is an error to leave out the key or secret' do
+      expect { Kraken::API.new(api_secret: 2) }.to raise_error KeyError
+      expect { Kraken::API.new(api_key: 2) }.to raise_error KeyError
+    end
+  end
+
   describe '#url' do
     let(:expected_params) do
       {
-          'url' => 'http://farts.gallery',
           'wait' => true,
-          'auth' => { 'api_key' => 1, 'api_secret' => 2}
+          'auth' => { 'api_key' => 1, 'api_secret' => 2},
+          'url' => 'http://farts.gallery'
       }
     end
 
     it 'provides a url to the kraken api' do
       stub_request(:post, "https://api.kraken.io/v1/url")
-        .with(:body => expected_params.to_json).to_return(body: result)
+        .with(:body => expected_params.to_json).to_return(body: result.to_json)
 
-        subject.url(
-          'url' => 'http://farts.gallery',
-          'wait' => true
-        )
+      res = subject.url('http://farts.gallery')
+      expect(res.code).to eq 200
     end
   end
 
@@ -46,12 +52,10 @@ describe Kraken::API do
         expect(req.body).to include(expected_params.to_json)
         expect(req.body).to include('filename="test.gif"')
         expect(req.headers['Content-Type']).to include('multipart/form-data')
-      end.to_return(body: result)
+      end.to_return(body: result.to_json)
 
-      subject.upload(
-        'wait' => true,
-        'file' => File.expand_path('test.gif', File.dirname(__FILE__))
-      )
+      res = subject.upload(File.expand_path('test.gif', File.dirname(__FILE__)))
+      expect(res).to be_kind_of Kraken::Response
     end
   end
 end
