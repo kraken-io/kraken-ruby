@@ -19,4 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency('activesupport')
   s.add_development_dependency('rspec')
   s.add_development_dependency('webmock', '~> 1.17')
+  s.add_development_dependency('pry')
+  s.add_development_dependency('pry-byebug')
 end
