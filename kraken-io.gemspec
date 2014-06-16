@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ['przemek@matylla.pl']
   s.homepage    = 'http://github.com/kraken-io/kraken-ruby'
   s.summary     = %q{Ruby gem for interacting with Kraken.io API}
-  s.description = %q{With this gem you can plug into the power and speed of Kraken.io Image Optimizer. http://kraken.io/}
+  s.description = %q{With this gem you can plug into the power and speed of Kraken.io Image Optimizer. https://kraken.io/}
   s.files       = ['lib/kraken-io.rb']
   s.license     = 'MIT'
   s.add_dependency('json')
