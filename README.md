@@ -122,8 +122,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 ````
 
@@ -136,8 +136,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 
 params = {
@@ -187,8 +187,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 
 params = {
@@ -234,8 +234,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 
 params = {
@@ -302,8 +302,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 
 params = {
@@ -350,8 +350,8 @@ require 'rubygems'
 require 'kraken-io'
 
 kraken = Kraken::API.new(
-    'your-api-key',
-    'your-api-secret'
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
 )
 
 params = {
