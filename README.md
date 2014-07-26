@@ -150,7 +150,7 @@ data = kraken.url(params)
 if data['success']
     puts 'Success! Optimized image URL: ' + response['kraked_url']
 else
-    puts 'Fail. Error message: ' + data['error']
+    puts 'Fail. Error message: ' + data['message']
 end
 ````
 
@@ -201,7 +201,7 @@ data = kraken.upload(params)
 if data['success']
     puts 'Success! Optimized image URL: ' + response['kraked_url']
 else
-    puts 'Fail. Error message: ' + data['error']
+    puts 'Fail. Error message: ' + data['message']
 end
 ````
 
@@ -253,7 +253,7 @@ data = kraken.upload(params)
 if data['success']
     puts 'Success! Optimized image URL: ' + response['kraked_url']
 else
-    puts 'Fail. Error message: ' + data['error']
+    puts 'Fail. Error message: ' + data['message']
 end
 ````
 
@@ -321,7 +321,7 @@ data = kraken.upload(params)
 if data['success']
     puts 'Success! Optimized image URL: ' + response['kraked_url']
 else
-    puts 'Fail. Error message: ' + data['error']
+    puts 'Fail. Error message: ' + data['message']
 end
 ````
 
@@ -369,7 +369,7 @@ data = kraken.upload(params)
 if data['success']
     puts 'Success! Optimized image URL: ' + response['kraked_url']
 else
-    puts 'Fail. Error message: ' + data['error']
+    puts 'Fail. Error message: ' + data['message']
 end
 ````
 
