@@ -72,6 +72,14 @@ describe Kraken::API do
       res = subject.callback_url('http://seriouslylike.omg').url('http://farts.gallery')
       expect(res.code).to eq 200
     end
+
+    it 'uses a callback provided as an option' do
+      stub_request(:post, "https://api.kraken.io/v1/url")
+        .with(:body => expected_params.to_json).to_return(body: result.to_json)
+
+      res = subject.url('http://farts.gallery', :callback_url => 'http://seriouslylike.omg')
+      expect(res.code).to eq 200
+    end
   end
 
   describe '#url' do
