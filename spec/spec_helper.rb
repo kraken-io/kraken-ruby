@@ -6,6 +6,7 @@ Dir[File.join(ROOT, 'spec/support/**/*.rb')].each {|f| require f}
 $LOAD_PATH.unshift(File.expand_path('lib', ROOT))
 
 require 'kraken-io'
+require 'rspec/its'
 require 'webmock/rspec'
 
 RSpec.configure do |config|
