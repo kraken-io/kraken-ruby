@@ -75,8 +75,8 @@ module Kraken
     def normalized_params(params)
       params = params.with_indifferent_access
 
-      if params.keys.include?(:callback_url) || @callback_url
-        params[:callback_url] = @callback_url
+      if params.keys.include?('callback_url') || @callback_url
+        params[:callback_url] ||= @callback_url
       else
         params[:wait] = true
       end

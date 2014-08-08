@@ -5,14 +5,14 @@ With this Ruby Gem you can plug into the power and speed of [Kraken.io](http://k
 
 * [Installation](#installation)
 * [Getting Started](#getting-started)
-* [Downloading Images](#downloading-images)
+* [Authentication](#authentication)
 * [How To Use](#how-to-use)
+  * [Usage - Image URL](#usage---image-url)
+  * [Usage - Image Upload](#usage---image-upload)
 * [Wait and Callback URL](#wait-and-callback-url)
   * [Wait Option](#wait-option)
   * [Callback URL](#callback-url)
-* [Authentication](#authentication)
-* [Usage - Image URL](#usage---image-url)
-* [Usage - Image Upload](#usage---image-upload)
+* [Downloading Images](#downloading-images)
 * [Lossy Optimization](#lossy-optimization)
 * [Image Resizing](#image-resizing)
 * [WebP Compression](#webp-compression)
@@ -22,96 +22,21 @@ With this Ruby Gem you can plug into the power and speed of [Kraken.io](http://k
 
 ## Installation
 
-    gem install kraken-io
+Add this line to your application's Gemfile:
+
+    gem 'kraken-io'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install kraken-io
 
 ## Getting Started
 
-First you need to sign-up for the [Kraken API](http://kraken.io/plans/) and obtain your unique **API Key** and **API Secret**. You will find both under [API Credentials](http://kraken.io/account/api-credentials). Once you have set up your account, you can start using Kraken API in your applications.
-
-## Downloading Images
-
-Remember - never link to optimized images offered to download. You have to download them first, and then replace them in your websites or applications. Due to security reasons optimized images are available on our servers **for one hour** only.
-
-## How to use
-
-You can optimize your images in two ways - by providing an URL of the image you want to optimize or by uploading an image file directly to Kraken API.
-
-The first option (image URL) is great for images that are already in production or any other place on the Internet. The second one (direct upload) is ideal for your deployment process, build script or the on-the-fly processing of your user's uploads where you don't have the images available on-line yet.
-
-## Wait and Callback URL
-
-Kraken gives you two options for fetching optimization results. With the `wait` option set the results will be returned immediately in the response. With `callback_url` the results will be posted to the URL specified in your request.
-
-### Wait option
-
-With the `wait` option turned on for every request to the API, the connection will be held open unil the image has been optimized. Once this is done you will get an immediate response with a JSON object containing your optimization results. To use this option simply set `"wait": true` in your request.
-
-**Request:**
-
-````js
-{
-    "auth": {
-        "api_key": "your-api-key",
-        "api_secret": "your-api-secret"
-    },
-    "url": "http://awesome-website.com/images/file.jpg",
-    "wait": true
-}
-````
-
-**Response**
-
-````js
-{
-    "success": true,
-    "file_name": "file.jpg",
-    "original_size": 324520,
-    "kraked_size": 165358,
-    "saved_bytes": 159162,
-    "kraked_url": "http://dl.kraken.io/d1aacd2a2280c2ffc7b4906a09f78f46/file.jpg"
-}
-````
-
-### Callback URL
-
-With the Callback URL the HTTPS connection will be terminated immediately and a unique `id` will be returned in the response body. After the optimization is over Kraken will POST a message to the `callback_url` specified in your request. The ID in the response will reflect the ID in the results posted to your Callback URL.
-
-We recommend [requestb.in](http://requestb.in) as an easy way to capture optimization results for initial testing.
-
-**Request:**
-
-````js
-{
-    "auth": {
-        "api_key": "your-api-key",
-        "api_secret": "your-api-secret"
-    },
-    "url": "http://awesome-website.com/images/header.jpg",
-    "callback_url": "http://awesome-website.com/kraken_results"
-}
-````
-
-**Response:**
-
-````js
-{
-    "id": "18fede37617a787649c3f60b9f1f280d"
-}
-````
-
-**Results posted to the Callback URL:**
-
-````js
-{
-    "id": "18fede37617a787649c3f60b9f1f280d"
-    "success": true,
-    "file_name": "header.jpg",
-    "original_size": 324520,
-    "kraked_size": 165358,
-    "saved_bytes": 159162,
-    "kraked_url": "http://dl.kraken.io/18fede37617a787649c3f60b9f1f280d/header.jpg"
-}
-````
+First you need to sign-up for the [Kraken API](http://kraken.io/plans/) and obtain your unique **API Key** and **API Secret**. You will find both under [API Credentials](http://kraken.io/account/api-credentials). Once you have set up your account, you can start using Kraken API in your applications. You can test integration without charge by signing up for the [Developers plan](http://kraken.io/signup/developers).
 
 ## Authentication
 
@@ -127,81 +52,137 @@ kraken = Kraken::API.new(
 )
 ````
 
+## How to use
+
+You can optimize your images in two ways - by providing an URL of the image you want to optimize or by uploading an image file directly to Kraken API.
+
+The first option (image URL) is great for images that are already in production or any other place on the Internet. The second one (direct upload) is ideal for your deployment process, build script or the on-the-fly processing of your user's uploads where you don't have the images available on-line yet.
+
 ## Usage - Image URL
 
-To optimize an image by providing image URL use the `kraken.url()` method. You will need to provide two mandatory parameters - `url` to the image and `wait` or `callback_url`:
+To optimize an image by providing an image URL use the `kraken.url()` method. You will need to provide an `url` to the image, and optionally a `callback_url`. If you don't provide a `callback_url`, then `wait` will be set to true automatically:
 
 ````ruby
-require 'rubygems'
-require 'kraken-io'
+data = kraken.url('http://image-url.com/file.jpg')
 
-kraken = Kraken::API.new(
-    :api_key => 'your-api-key',
-    :api_secret => 'your-api-secret'
-)
-
-params = {
-    'url' => 'http://image-url.com/file.jpg',
-    'wait' => true
-}
-
-data = kraken.url(params)
-
-if data['success']
-    puts 'Success! Optimized image URL: ' + response['kraked_url']
+if data.success
+    puts 'Success! Optimized image URL: ' + data.kraked_url
 else
-    puts 'Fail. Error message: ' + data['message']
+    puts 'Fail. Error message: ' + data.message
 end
 ````
 
-Depending on a choosen response option (Wait or Callback URL) in the `data` object you will find either the optimization ID or optimization results containing a `success` property, file name, original file size, kraked file size, amount of savings and optimized image URL:
+Depending on if you perform a synchronous request or use a callback URL, in the returned `data` object you will find either the optimization ID or optimization results containing a `success` property, file name, original file size, kraked file size, amount of savings and optimized image URL:
 
-````js
-{
-    success: true,
-    file_name: 'file.jpg',
-    original_size: 30664,
-    kraked_size: 577,
-    saved_bytes: 30087,
-    kraked_url: 'http://dl.kraken.io/d1aacd2a2280c2ffc7b4906a09f78f46/file.jpg'
-}
+````ruby
+data.success       #=> true,
+data.file_name     #=> "file.jpg"
+data.original_size #=> 30664
+data.kraked_size   #=> 577
+data.saved_bytes   #=> 30087
+data.kraked_url    #=> "http://dl.kraken.io/d1aacd2a2280c2ffc7b4906a09f78f46/file.jpg"
 ````
 
-If no saving were found, the API will return an object containing `"success":false` and a proper error message:
+If no savings were found, the API will return an object containing `"success":false` and a proper error message:
 
-````js
-{
-    success: false,
-    error: 'This image can not be optimized any further'
-}
+````ruby
+data.success #=> false
+data.message #=> "This image can not be optimized any further"
 ````
 
 ## Usage - Image Upload
 
-If you want to upload your images directly to Kraken API use the `kraken.upload()` method. You will need to provide two mandatory parameters - `file` which is the absolute path to the file and `wait` or `callback_url`.
+If you want to upload your images directly to Kraken API use the `kraken.upload()` method. You will need to provide an absolute path to the file, and optionally, an options hash with a `callback_url`.
 
 In the `data` object you will find the same optimization properties as with `url` option above.
 
 ````ruby
-require 'rubygems'
-require 'kraken-io'
+data = kraken.upload('/path/to/image/file.jpg')
 
-kraken = Kraken::API.new(
-    :api_key => 'your-api-key',
-    :api_secret => 'your-api-secret'
-)
+if data.success
+    puts 'Success! Optimized image URL: ' + data.kraked_url
+else
+    puts 'Fail. Error message: ' + data.message
+end
+````
 
+## Wait and Callback URL
+
+Kraken gives you two options for fetching optimization results. With the `wait` option set the results will be returned immediately in the response. With `callback_url` the results will be posted to the URL specified in your request. Unless a `callback_url` is set in the options, the kraken gem will use the `wait` option by default to perform synchronous processing.
+
+### Wait option
+
+By default, the `wait` option is turned on for every request to the API, and the connection will be held open until the image has been optimized. Once this is finished you will get an immediate response with a Ruby object containing your optimization results.
+
+**Request:**
+
+````ruby
+data = kraken.url('http://awesome-website.com/images/file.jpg')
+````
+
+**Response**
+
+````ruby
+data.success       #=> true
+data.file_name     #=> "file.jpg"
+data.original_size #=> 324520
+data.kraked_size   #=> 165358
+data.saved_bytes   #=> 159162
+data.kraked_url    #=> "http://dl.kraken.io/d1aacd2a2280c2ffc7b4906a09f78f46/file.jpg"
+````
+
+### Callback URL
+
+With the Callback URL the HTTPS connection will be terminated immediately and a unique `id` will be returned in the response body. After the optimization is finished, Kraken will POST a message to the `callback_url` specified in your request. The ID in the response will reflect the ID in the results posted to your Callback URL.
+
+We recommend [requestb.in](http://requestb.in) as an easy way to capture optimization results for initial testing.
+
+**Request:**
+
+````ruby
 params = {
-    'file' => '/path/to/image/file.jpg',
-    'wait' => true
+    :callback_url => 'http://awesome-website.com/kraken_results'
 }
 
-data = kraken.upload(params)
+data = kraken.url('http://awesome-website.com/images/header.jpg', params)
+````
 
-if data['success']
-    puts 'Success! Optimized image URL: ' + response['kraked_url']
-else
-    puts 'Fail. Error message: ' + data['message']
+**Response:**
+
+````ruby
+data.id #=> "18fede37617a787649c3f60b9f1f280d"
+````
+
+**Results posted to the Callback URL:**
+
+````ruby
+def kraken_results
+  params[:id]            #=> "18fede37617a787649c3f60b9f1f280d"
+  params[:success]       #=> true
+  params[:file_name]     #=> "header.jpg"
+  params[:original_size] #=> 324520
+  params[:kraked_size]   #=> 165358
+  params[:saved_bytes]   #=> 159162
+  params[:kraked_url]    #=> "http://dl.kraken.io/18fede37617a787649c3f60b9f1f280d/header.jpg"
+end
+````
+
+If you want to set a `callback_url` to be used for *all* subsequent requests coming from a kraken instance, you can set it like this:
+
+````ruby
+kraken.callback_url('http://awesome-website.com/kraken_results')
+data = kraken.url('http://awesome-website.com/images/header.jpg')
+````
+
+## Downloading Images
+
+Remember - never link to optimized images offered to download. You have to download them first, and then replace them in your websites or applications. Due to security reasons optimized images are available on our servers **for one hour** only. You can copy them back to your application with `open-uri` like so:
+
+````ruby
+require 'open-uri'
+
+if request.success
+    File.write('local_file_name.jpg', open(data.kraked_url).read, { :mode => 'wb' })
 end
 ````
 
@@ -212,11 +193,7 @@ When you decide to sacrifice just a small amount of image quality (usually unnot
 To use lossy optimizations simply set `"lossy" => true` in your request:
 
 ````ruby
-params = {
-    'file' => '/path/to/image/file.jpg',
-    'lossy' => true,
-    'wait' => true
-}
+kraken.upload('/path/to/image/file.jpg', 'lossy' => true)
 ````
 
 ### PNG Images
@@ -230,17 +207,7 @@ For lossy JPEG optimizations Kraken will generate multiple copies of a input ima
 Image resizing option is great for creating thumbnails or preview images in your applications. Kraken will first resize the given image and then optimize it with it's vast array of optimization algorythms. The `resize` option needs a few parameters to be passed like desired `width` and/or `height` and a mandatory `strategy` property. For example:
 
 ````ruby
-require 'rubygems'
-require 'kraken-io'
-
-kraken = Kraken::API.new(
-    :api_key => 'your-api-key',
-    :api_secret => 'your-api-secret'
-)
-
 params = {
-    'file' => '/path/to/image/file.jpg',
-    'wait' => true,
     'resize' => {
         'width' => 100,
         'height' => 75,
@@ -248,12 +215,12 @@ params = {
     }
 }
 
-data = kraken.upload(params)
+data = kraken.upload('/path/to/image/file.jpg', params)
 
-if data['success']
-    puts 'Success! Optimized image URL: ' + response['kraked_url']
+if data.success
+    puts 'Success! Optimized image URL: ' + data.kraked_url
 else
-    puts 'Fail. Error message: ' + data['message']
+    puts 'Fail. Error message: ' + data.message
 end
 ````
 
@@ -273,10 +240,8 @@ To recompress your PNG or JPEG files into WebP format simply set `"webp": true` 
 
 ````ruby
 params = {
-    'file' => '/path/to/image/file.jpg',
-    'wait' => true,
-    'webp': true,
-    'lossy': true
+    'webp' => true,
+    'lossy' => true
 }
 ````
 
@@ -298,17 +263,7 @@ Kraken API allows you to store optimized images directly in your S3 bucket or Cl
 The above parameters must be passed in a `s3_store` object:
 
 ````ruby
-require 'rubygems'
-require 'kraken-io'
-
-kraken = Kraken::API.new(
-    :api_key => 'your-api-key',
-    :api_secret => 'your-api-secret'
-)
-
 params = {
-    'file' => '/path/to/image/file.jpg',
-    'wait' => true,
     's3_store' => {
         'key' => 'your-amazon-access-key',
         'secret' => 'your-amazon-secret-key',
@@ -316,21 +271,19 @@ params = {
     }
 }
 
-data = kraken.upload(params)
+data = kraken.upload('/path/to/image/file.jpg', params)
 
-if data['success']
-    puts 'Success! Optimized image URL: ' + response['kraked_url']
+if data.success
+    puts 'Success! Optimized image URL: ' + data.kraked_url
 else
-    puts 'Fail. Error message: ' + data['message']
+    puts 'Fail. Error message: ' + data.message
 end
 ````
 
-The `data` object will contain `kraked_url` key pointing directly to the optimized file location in your Amazon S3 account:
+The `data` object will contain `kraked_url` method pointing directly to the optimized file location in your Amazon S3 account:
 
-````js
-{
-    kraked_url: "http://s3.amazonaws.com/YOUR_CONTAINER/path/to/file.jpg"
-}
+````ruby
+data.kraked_url #=> "http://s3.amazonaws.com/YOUR_CONTAINER/path/to/file.jpg"
 ````
 
 ### Rackspace Cloud Files
@@ -346,17 +299,7 @@ The `data` object will contain `kraked_url` key pointing directly to the optimiz
 The above parameters must be passed in a `cf_store` object:
 
 ````ruby
-require 'rubygems'
-require 'kraken-io'
-
-kraken = Kraken::API.new(
-    :api_key => 'your-api-key',
-    :api_secret => 'your-api-secret'
-)
-
 params = {
-    'file' => '/path/to/image/file.jpg',
-    'wait' => true,
     'cf_store' => {
         'user' => 'your-rackspace-username',
         'key' => 'your-rackspace-api-key',
@@ -364,25 +307,25 @@ params = {
     }
 }
 
-data = kraken.upload(params)
+data = kraken.upload('/path/to/image/file.jpg', params)
 
-if data['success']
-    puts 'Success! Optimized image URL: ' + response['kraked_url']
+if data.success
+    puts 'Success! Optimized image URL: ' + response.kraked_url
 else
-    puts 'Fail. Error message: ' + data['message']
+    puts 'Fail. Error message: ' + data.message
 end
 ````
 
 If your container is CDN-enabled, the optimization results will contain `kraked_url` which points directly to the optimized file location in your Cloud Files account, for example:
 
-````js
-kraked_url: "http://e9ffc04970a269a54eeb-cc00fdd2d4f11dffd931005c9e8de53a.r2.cf1.rackcdn.com/path/to/file.jpg"
+````ruby
+data.kraked_url #=> "http://e9ffc04970a269a54eeb-cc00fdd2d4f11dffd931005c9e8de53a.r2.cf1.rackcdn.com/path/to/file.jpg"
 ````
 
 If your container is not CDN-enabled `kraked_url` will point to the optimized image URL in the Kraken API:
 
-````js
-kraked_url: "http://dl.kraken.io/ecdfa5c55d5668b1b5fe9e420554c4ee/file.jpg"
+````ruby
+data.kraked_url #=> "http://dl.kraken.io/ecdfa5c55d5668b1b5fe9e420554c4ee/file.jpg"
 ````
 
 ## LICENSE - MIT

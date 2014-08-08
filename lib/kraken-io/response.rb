@@ -8,7 +8,7 @@ module Kraken
     extend Forwardable
 
     def_delegators :@parsed, :success, :file_name, :original_size,
-      :kraked_size, :saved_bytes, :kraked_url
+      :kraked_size, :saved_bytes, :kraked_url, :id, :message
 
     def initialize(response)
       super(response)
