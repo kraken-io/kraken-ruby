@@ -16,6 +16,8 @@ With this Ruby Gem you can plug into the power and speed of [Kraken.io](http://k
 * [Lossy Optimization](#lossy-optimization)
 * [Image Resizing](#image-resizing)
 * [WebP Compression](#webp-compression)
+* [Image Type Conversion](#image-type-conversion)
+* [Preserving Metadata](#preserving-metadata)
 * [External Storage](#external-storage)
   * [Amazon S3](#amazon-s3)
   * [Rackspace Cloud Files](#rackspace-cloud-files)
