@@ -251,6 +251,69 @@ params = {
 }
 ````
 
+## Image Type Conversion
+
+Kraken API allows you to easily convert different images from one type/format to another. If, for example, you would like to turn you transparent PNG file into a JPEG with a grey background Kraken API has you covered.
+
+In order to convert between different image types you need to add an extra `convert` object to you request JSON. This object takes three properties:
+
+- `format` with which you specify the file type you want your image converted into.
+- An optional `background` property where you can specify background colour when converting from transparent file formats such as PNG and GIF into a fully opaque format such as JPEG.
+- An optional `keep_extension` property which allows you to keep the original file extension intact regardless of the output image format.
+
+**Mandatory Parameters:**
+- `format` —    The image format you wish to convert your image into. This can accept one of the following values: `jpeg`, `png` or `gif`.
+
+**Optional Parameters:**
+- `background` —    Background image when converting from transparent file formats like PNG or GIF into fully opaque format like JPEG. The background property can be passed in HEX notation `"#f60"` or `"#ff6600"`, RGB `"rgb(255, 0, 0)"` or RGBA `"rgba(91, 126, 156, 0.7)"`. The default background color is white.
+- `keep_extension` —    a boolean value (`true` or `false`) instructing Kraken API whether or not the original extension should be kept in the output filename. For example when converting "image.jpg" into PNG format with this flag turned on the output image name will still be "image.jpg" even though the image has been converted into a PNG. The default value is `false` meaning the correct extension will always be set.
+
+
+## Preserving Metadata
+
+By default Kraken API will **strip all the metadata found in an image** to make the image file as small as it is possible, and in both lossy and lossless modes. Entries like EXIF, XMP and IPTC tags, colour profile information, etc. will be stripped altogether.
+
+However there are situations when you might want to preserve some of the meta information contained in the image, for example, copyright notice or geotags. In order to preserve the most important meta entries add an additional `preserve_meta` array to your request with one or more of the following values:
+
+````js
+{
+    "preserve_meta": ["date", "copyright", "geotag", "orientation", "profile"]
+}
+````
+
+- `profile` - will preserve the ICC colour profile. ICC colour profile information adds unnecessary bloat to images. However, preserving it can be necessary in **extremely rare cases** where removing this information could lead to a change in brightness and/or saturation of the resulting file.
+- `date` - will preserve image creation date.
+- `copyright` - will preserve copyright entries.
+- `geotag` - will preserve location-specific information.
+- `orientation` - will preserve the orientation (rotation) mark.
+
+Example integration:
+
+````ruby
+require 'rubygems'
+require 'kraken-io'
+
+kraken = Kraken::API.new(
+    :api_key => 'your-api-key',
+    :api_secret => 'your-api-secret'
+)
+
+params = {
+  'file' => '/path/to/image/file.jpg',
+  'wait' => true,
+  'preserve_meta' => [ 'profile', 'geotag', 'orientation' ]
+}
+
+data = kraken.upload('/path/to/image/file.jpg', 'lossy' => true)
+
+if data.success
+    puts 'Success! Optimized image URL: ' + response.kraked_url
+else
+    puts 'Fail. Error message: ' + data.message
+end
+
+````
+
 ## External Storage
 
 Kraken API allows you to store optimized images directly in your S3 bucket, Cloud Files container, Azure container or SoftLayer Object Storage container. With just a few additional parameters your optimized images will be pushed to your external storage in no time.
