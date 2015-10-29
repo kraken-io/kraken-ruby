@@ -83,11 +83,11 @@ data.saved_bytes   #=> 30087
 data.kraked_url    #=> "http://dl.kraken.io/d1aacd2a2280c2ffc7b4906a09f78f46/file.jpg"
 ````
 
-If no savings were found, the API will return an object containing `"success":false` and a proper error message:
+If no savings were found, the API will still return an object containing `"success":true` however, `saved_bytes` will show zero bytes of savings:
 
 ````ruby
-data.success #=> false
-data.message #=> "This image can not be optimized any further"
+data.success #=> true
+data.saved_bytes #=> 0
 ````
 
 ## Usage - Image Upload
