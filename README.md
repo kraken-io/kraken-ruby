@@ -231,6 +231,10 @@ The `strategy` property can have one of the following values:
 - `landscape` - Exact height will be set, width will be adjusted according to aspect ratio.
 - `auto` - The best strategy (portrait or landscape) will be selected for a given image according to aspect ratio.
 - `crop` - This option will crop your image to the exact size you specify with no distortion.
+- `square` - This strategy will first crop the image by its shorter dimension to make it a square, then resize it to the specified size.
+- `fill` - This strategy allows you to resize the image to fit the specified bounds while preserving the aspect ratio (just like auto strategy). The optional background property allows you to specify a color which will be used to fill the unused portions of the previously specified bounds.
+
+** Please visit our [Image Resizing](https://kraken.io/docs/image-resizing) documentation for details and examples. **
 
 ## WebP Compression
 
