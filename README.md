@@ -16,9 +16,11 @@ With this Ruby Gem you can plug into the power and speed of [Kraken.io](http://k
 * [Lossy Optimization](#lossy-optimization)
 * [Image Resizing](#image-resizing)
 * [WebP Compression](#webp-compression)
-* [Amazon S3 and Rackspace Cloud Files Integration](#amazon-s3-and-rackspace-cloud-files)
+* [External Storage](#external-storage)
   * [Amazon S3](#amazon-s3)
   * [Rackspace Cloud Files](#rackspace-cloud-files)
+  * [Microsoft Azure](#microsoft-azure)
+  * [SoftLayer Object Storage](#softlayer-object-storage)
 
 ## Installation
 
@@ -249,9 +251,9 @@ params = {
 }
 ````
 
-## Amazon S3 and Rackspace Cloud Files
+## External Storage
 
-Kraken API allows you to store optimized images directly in your S3 bucket or Cloud Files container. With just a few addidtional parameters your optimized images will be pushed to your external storage in no time.
+Kraken API allows you to store optimized images directly in your S3 bucket, Cloud Files container, Azure container or SoftLayer Object Storage container. With just a few additional parameters your optimized images will be pushed to your external storage in no time.
 
 ### Amazon S3
 
@@ -332,9 +334,84 @@ If your container is not CDN-enabled `kraked_url` will point to the optimized im
 data.kraked_url #=> "http://dl.kraken.io/ecdfa5c55d5668b1b5fe9e420554c4ee/file.jpg"
 ````
 
+### Microsoft Azure
+
+**Mandatory Parameters:**
+- `account` - Your Azure Storage Account.
+- `key` - Your unique Azure Storage Access Key.
+- `container` - Name of a destination container on your Azure account.
+
+**Optional Parameters:**
+- `path` - Destination path in your container (e.g. `"images/layout/header.jpg"`). Defaults to root `"/"`.
+
+The above parameters must be passed in a `azure_store` key:
+
+````ruby
+
+params = {
+    'wait' => true,
+    'azure_store' => {
+        'account' => 'your-azure-account',
+        'key' => 'your-azure-storage-access-key',
+        'container' => 'destination-container'
+    }
+}
+
+data = kraken.upload('/path/to/image/file.jpg', params)
+
+if data.success
+    puts 'Success! Optimized image URL: ' + response.kraked_url
+else
+    puts 'Fail. Error message: ' + data.message
+end
+
+````
+
+### SoftLayer Object Storage
+
+**Mandatory Parameters:**
+- `user` - Your SoftLayer username.
+- `key` - Your SoftLayer API Key.
+- `container` - Name of a destination container on your SoftLayer account.
+- `region` - Short name of the region your container is located in. This can be one of the following: 
+`syd01` `lon02` `mon01` `dal05` `tok02`
+`tor01` `hkg02` `mex01` `par01` `fra02`
+`mil01` `sjc01` `sng01` `mel01` `ams01`
+
+**Optional Parameters:**
+- `path` - Destination path in your container (e.g. "images/layout/header.jpg"). Defaults to root "/".
+- `cdn_url` - A boolean value `true` or `false` instructing Kraken API to return a public CDN URL of your optimized file. Defaults to `false` meaning the non-CDN URL will be returned.
+
+
+The above parameters must be passed in a `sl_store` object:
+
+````ruby
+
+params = {
+    'wait' => true,
+    'sl_store' => {
+        'user' => 'your-softlayer-account',
+        'key' => 'your-softlayer-key',
+        'container' => 'destination-container',
+        'region' => 'your-container-location',
+        'cdn_url' => true,
+        'path' =>'images/layout/header.jpg'
+    }
+}
+
+data = kraken.upload('/path/to/image/file.jpg', params)
+
+if data.success
+    puts 'Success! Optimized image URL: ' + response.kraked_url
+else
+    puts 'Fail. Error message: ' + data.message
+end
+
+````
+
 ## LICENSE - MIT
 
-Copyright (c) 2013 Nekkra UG
+Copyright (c) 2013-2015 Nekkra UG
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
