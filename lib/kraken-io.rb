@@ -34,8 +34,12 @@ module Kraken
     def url(url, params = {})
       params = normalized_params(params).merge!(auth_hash)
       params[:url] = url
+
       call_kraken do
-        res = self.class.post('/url', body: params.to_json)
+        res = self.class.post('/url', body: params.to_json, headers: {
+          'Content-Type' => 'application/json'
+        })
+
         res = Kraken::Response.new(res)
         yield res if block_given? or return res
       end
